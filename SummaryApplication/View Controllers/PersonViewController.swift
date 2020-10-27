@@ -23,6 +23,8 @@ class PersonViewController: UIViewController {
     @IBOutlet var pagerLabel: UILabel!
     @IBOutlet var emailLabel: UILabel!
     
+    var user: User!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -31,7 +33,7 @@ class PersonViewController: UIViewController {
     
     
     private func setupLabels() {
-        let person = Person.getPerson()
+        let person = user.person
         
         fullNameLabel.text = person.fullName
         yearsOldLable.text = String(person.yearsOld)

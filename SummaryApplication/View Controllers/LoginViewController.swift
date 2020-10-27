@@ -21,7 +21,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
+        super.touchesBegan(touches, with: event)
+        view.endEditing(true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -33,15 +34,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         tabBarController.viewControllers?.forEach { vc in
             if let welcomeUserVC = vc as? WelcomeUserViewController {
                 welcomeUserVC.userName = userNameTextField.text
+            } else if let personVC = vc as? PersonViewController {
+                personVC.user = user
             }
         }
     }
 
     @IBAction func loginPressed() {
-        guard let userName = userNameTextField.text,
-              let password = passwordTextField.text,
-              userName == user.userName,
-              password == user.password else {
+        guard userNameTextField.text == user.userName,
+              passwordTextField.text == user.password else {
             showAlert(
                 title: "Неверный логин или пароль",
                 message: "Пожалуйста, введите правильный логин и пароль"
@@ -55,12 +56,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func forgotUserNamePressed() {
         showAlert(title: "А голову ты дома не забыли?",
-                  message: "Ваш логин - User!")
+                  message: "Ваш логин - \(user.userName)!")
     }
     
     @IBAction func forgotPasswordPressed() {
         showAlert(title: "Ну как же так?!",
-                  message: "Ваш пароль - Password!")
+                  message: "Ваш пароль - \(user.password)!")
     }
     
     @IBAction func unwind(_ segue: UIStoryboardSegue) {
@@ -69,11 +70,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if (textField.tag == 1) {
+        if textField == userNameTextField {
+            textField.resignFirstResponder()
+            passwordTextField.becomeFirstResponder()
+        } else {
             loginPressed()
             performSegue(withIdentifier: "tabBarController", sender: nil)
-        } else {
-            passwordTextField.becomeFirstResponder()
         }
         
         return true
